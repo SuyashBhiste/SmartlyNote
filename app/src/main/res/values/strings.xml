@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Notes</string>
+    <string name="str_title_name">Title</string>
+    <string name="str_desc_name">Description</string>
+    <string name="str_remindMe_name">Remind Me</string>
+    <string name="str_date_name">Date</string>
+    <string name="str_time_name">Time</string>
+    <string name="str_back_name">Back</string>
+    <string name="str_done_name">Done</string>
+    <string name="str_forgetpassword_name">Forget Password?</string>
+    <string name="str_loginviagoogle_name">Login via Google</string>
+    <string name="str_login_name">Log In</string>
+    <string name="str_password">Password</string>
+    <string name="str_email">Email</string>
+    <string name="str_confirmpassword_name">Confirm Password</string>
+    <string name="str_displayname_name">Display Name</string>
+    <string name="str_continuewithgoogle_name">Continue with Google</string>
+    <string name="str_signup_name">Sign Up</string>
+</resources>

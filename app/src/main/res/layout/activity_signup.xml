@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linerlayoutsignup"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#FDD68F"
+    android:orientation="vertical"
+    android:padding="15dp"
+    tools:context=".SignUpActivity">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="Company Logo"
+        android:minHeight="150dp"
+        app:srcCompat="@drawable/googleg_standard_color_18" />
+
+    <EditText
+        android:id="@+id/nameTB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/str_displayname_name"
+        android:inputType="textEmailAddress"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/emailTB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/str_email"
+        android:inputType="textEmailAddress"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/passTB"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/str_password"
+        android:inputType="textPassword"
+        android:textSize="20sp" />
+
+
+    <EditText
+            android:id="@+id/cpassTB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/str_confirmpassword_name"
+            android:inputType="textPassword"
+            android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/signUpBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:layout_marginBottom="15dp"
+        android:layout_weight="1"
+        android:background="#4CAF50"
+        android:text="@string/str_signup_name" />
+
+</LinearLayout>
