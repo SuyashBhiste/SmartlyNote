@@ -10,6 +10,15 @@
     android:padding="15dp"
     tools:context=".SignUpActivity">
 
+    <ImageView
+        android:id="@+id/imageViewLogo"
+        android:layout_width="match_parent"
+        android:layout_height="125dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/str_companyname_name"
+        android:minHeight="150dp"
+        app:srcCompat="@drawable/googleg_standard_color_18" />
+
     <EditText
         android:id="@+id/nameTB"
         android:layout_width="match_parent"
@@ -69,15 +78,5 @@
         android:background="#4CAF50"
         android:shadowRadius="10"
         android:text="@string/str_signup_name" />
-
-    <Button
-        android:id="@+id/GoogleSignup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="15dp"
-        android:layout_weight="1"
-        android:background="#FFFFFF"
-        android:text="@string/str_continuewithgoogle_name" />
 
 </LinearLayout>

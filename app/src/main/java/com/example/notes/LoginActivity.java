@@ -51,13 +51,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 final String email = emailTB.getText().toString();
-                final String password = emailTB.getText().toString();
+                final String password = passTB.getText().toString();
 
                 if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                    if (password.length() != 0) {
+                    if (password.length() >= 8) {
                         loginFunc(email, password);
                     } else {
-                        passTB.setError("Password must be greater than 8 characters");
+                        passTB.setError("Password must be atleast 8 characters");
                     }
                 }else{
                     emailTB.setError("Invalid email");
@@ -81,6 +81,28 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        forgetPassTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String email = emailTB.getText().toString();
+
+                if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    mAuth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(LoginActivity.this, "Reset link sent to mail", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Email not registered", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                } else {
+                    emailTB.setError("Fill email to reset password");
+                }
+            }
+        });
+
     }
 
     @Override
@@ -91,8 +113,9 @@ public class LoginActivity extends AppCompatActivity {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
 
         if (currentUser!=null || account!=null) {
-//            updateUI(currentUser);
             System.out.println("User Signed IN already");
+            Log.i("TAG", "Already Signed In: TRUE");
+//            updateUI(currentUser);
         }
     }
 
@@ -121,7 +144,7 @@ public class LoginActivity extends AppCompatActivity {
                 .requestEmail()
                 .build();
 
-        final GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(LoginActivity.this, gso);
+        GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(LoginActivity.this, gso);
 
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
@@ -144,7 +167,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("TAG", "signInResult:success");
 //            updateUI(account);
         } catch (ApiException e) {
-            Toast.makeText(LoginActivity.this, "User not registered", Toast.LENGTH_SHORT).show();
+            Toast.makeText(LoginActivity.this, "Failure", Toast.LENGTH_SHORT).show();
             Log.w("TAG", "signInResult:failed code=" + e.getStatusCode());
         }
     }

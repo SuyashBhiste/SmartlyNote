@@ -43,14 +43,22 @@ public class SignUpActivity extends AppCompatActivity {
                 name = nameTB.getText().toString();
                 confirmPassword = confirmPassTB.getText().toString();
 
-                if (Patterns.EMAIL_ADDRESS.matcher(email).matches() && password.length() != 0 && name.length() != 0) {
-                    if (password.equals(confirmPassword)) {
-                        signUp(email, password);
-                    } else {
-                        confirmPassTB.setError("Password is different");
+                if (name.length() != 0) {
+                    if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                        if (password.length() >= 8) {
+                            if (password.equals(confirmPassword)) {
+                                signUp(email, password);
+                            } else {
+                                confirmPassTB.setError("Password didn't match");
+                            }
+                        }else{
+                            passTB.setError("Password must be atleast 8 characters");
+                        }
+                    }else{
+                        emailTB.setError("Invalid email");
                     }
-                } else {
-                    Toast.makeText(SignUpActivity.this, "Field is not filled correctly", Toast.LENGTH_SHORT).show();
+                }else{
+                    nameTB.setError("Field is empty");
                 }
             }
         });
@@ -63,8 +71,8 @@ public class SignUpActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d("TAG", "createUserWithEmail:success");
-                            Intent i = new Intent(SignUpActivity.this, LoginActivity.class);
-                            startActivity(i);
+                            Intent signup2Login = new Intent(SignUpActivity.this, LoginActivity.class);
+                            startActivity(signup2Login);
                             finish();
                         } else {
                             Log.w("TAG", "createUserWithEmail:failure", task.getException());

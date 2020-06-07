@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/linerlayoutlogin"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="#FDD68F"
     android:orientation="vertical"
     android:padding="15dp"
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:contentDescription="Company Logo"
+        android:contentDescription="@string/str_companyname_name"
         android:minHeight="150dp"
         app:srcCompat="@drawable/googleg_standard_color_18" />
 
@@ -83,6 +83,6 @@
         android:layout_marginBottom="15dp"
         android:layout_weight="1"
         android:background="#3F51B5"
-        android:text="@string/str_signup_name" />
+        android:text="@string/str_createnewaccount_name" />
 
 </LinearLayout>
