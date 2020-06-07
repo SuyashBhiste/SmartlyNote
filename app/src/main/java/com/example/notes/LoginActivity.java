@@ -2,16 +2,15 @@ package com.example.notes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -27,17 +26,18 @@ import com.google.firebase.auth.FirebaseUser;
 public class LoginActivity extends AppCompatActivity {
 
     private TextView forgetPassTV;
-    private static int RC_SIGN_IN = 12354;
+    private EditText emailTB, passTB;
+    private Button logInBtn, signUpBtn;
+    private SignInButton googleLoginbtn;
+
     private FirebaseAuth mAuth;
+    private static int RC_SIGN_IN = 12354;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText emailTB, passTB;
-        Button logInBtn, signUpBtn;
-        SignInButton googleLoginbtn;
         mAuth = FirebaseAuth.getInstance();
 
         forgetPassTV = findViewById(R.id.forgetPassTV);
@@ -47,13 +47,21 @@ public class LoginActivity extends AppCompatActivity {
         signUpBtn = findViewById(R.id.signupBtn);
         googleLoginbtn = findViewById(R.id.googleLoginBtn);
 
-        final String email = emailTB.getText().toString();
-        final String password = emailTB.getText().toString();
-
         logInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                loginFunc(email, password);
+                final String email = emailTB.getText().toString();
+                final String password = emailTB.getText().toString();
+
+                if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    if (password.length() != 0) {
+                        loginFunc(email, password);
+                    } else {
+                        passTB.setError("Password must be greater than 8 characters");
+                    }
+                }else{
+                    emailTB.setError("Invalid email");
+                }
             }
         });
 
@@ -94,16 +102,13 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d("TAG", "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
 //                            updateUI(user);
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w("TAG", "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
-//                            updateUI(null);
                         }
                     }
                 });
@@ -128,8 +133,6 @@ public class LoginActivity extends AppCompatActivity {
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            // The Task returned from this call is always completed, no need to attach
-            // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }
@@ -138,14 +141,11 @@ public class LoginActivity extends AppCompatActivity {
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-
-            // Signed in successfully, show authenticated UI.
+            Log.i("TAG", "signInResult:success");
 //            updateUI(account);
         } catch (ApiException e) {
-            // The ApiException status code indicates the detailed failure reason.
-            // Please refer to the GoogleSignInStatusCodes class reference for more information.
+            Toast.makeText(LoginActivity.this, "User not registered", Toast.LENGTH_SHORT).show();
             Log.w("TAG", "signInResult:failed code=" + e.getStatusCode());
-//            updateUI(null);
         }
     }
 
