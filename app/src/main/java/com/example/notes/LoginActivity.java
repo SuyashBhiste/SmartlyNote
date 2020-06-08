@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -25,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private ImageView imageView;
     private TextView forgetPassTV;
     private EditText emailTB, passTB;
     private Button logInBtn, signUpBtn;
@@ -40,12 +42,15 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        imageView = findViewById(R.id.imageView);
         forgetPassTV = findViewById(R.id.forgetPassTV);
         emailTB = findViewById(R.id.emailTB);
         passTB = findViewById(R.id.passTB);
         logInBtn = findViewById(R.id.loginBtn);
         signUpBtn = findViewById(R.id.signupBtn);
         googleLoginbtn = findViewById(R.id.googleLoginBtn);
+
+        imageView.getLayoutParams().height = 400;
 
         logInBtn.setOnClickListener(new View.OnClickListener() {
             @Override

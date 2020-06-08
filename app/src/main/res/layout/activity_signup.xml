@@ -5,7 +5,6 @@
     android:id="@+id/linerlayoutsignup"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FDD68F"
     android:orientation="vertical"
     android:padding="15dp"
     tools:context=".SignUpActivity">
@@ -17,7 +16,7 @@
         android:layout_weight="1"
         android:contentDescription="@string/str_companyname_name"
         android:minHeight="150dp"
-        app:srcCompat="@drawable/googleg_standard_color_18" />
+        app:srcCompat="@drawable/ic_appicon" />
 
     <EditText
         android:id="@+id/nameTB"

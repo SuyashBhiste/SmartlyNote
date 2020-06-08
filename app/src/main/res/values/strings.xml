@@ -16,6 +16,6 @@
     <string name="str_displayname_name">Display Name</string>
     <string name="str_continuewithgoogle_name">Continue with Google</string>
     <string name="str_signup_name">Sign Up</string>
-    <string name="str_companyname_name">Sign Up</string>
+    <string name="str_companyname_name">Company Name</string>
     <string name="str_createnewaccount_name">Create New Account</string>
 </resources>

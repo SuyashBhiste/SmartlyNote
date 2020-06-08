@@ -5,7 +5,6 @@
     android:id="@+id/linerlayoutlogin"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FDD68F"
     android:orientation="vertical"
     android:padding="15dp"
     tools:context=".LoginActivity">
@@ -14,10 +13,9 @@
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:contentDescription="@string/str_companyname_name"
         android:minHeight="150dp"
-        app:srcCompat="@drawable/googleg_standard_color_18" />
+        app:srcCompat="@drawable/ic_appicon" />
 
     <EditText
         android:id="@+id/emailTB"
@@ -25,7 +23,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="15dp"
-        android:layout_weight="1"
         android:ems="10"
         android:hint="@string/str_email"
         android:inputType="textEmailAddress"
@@ -37,7 +34,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
-        android:layout_weight="1"
         android:ems="10"
         android:hint="@string/str_password"
         android:inputType="textPassword"
@@ -49,7 +45,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:layout_marginBottom="15dp"
-        android:layout_weight="1"
         android:background="#4CAF50"
         android:text="@string/str_login_name" />
 
@@ -62,18 +57,10 @@
         android:id="@+id/forgetPassTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="@string/str_forgetpassword_name"
         android:textAlignment="center"
         android:textColor="#0A00EC"
         android:textColorLink="#0010C5" />
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="3dp"
-        android:layout_weight="1"
-        android:background="#428DF4" />
 
     <Button
         android:id="@+id/signupBtn"
@@ -81,7 +68,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:layout_marginBottom="15dp"
-        android:layout_weight="1"
         android:background="#3F51B5"
         android:text="@string/str_createnewaccount_name" />
 

@@ -14,6 +14,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -23,17 +24,16 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText emailTB, passTB, nameTB, confirmPassTB;
     private String email, password, name, confirmPassword;
 
-    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
     private FirebaseDatabase db = FirebaseDatabase.getInstance();
-    DatabaseReference rootref = db.getReference();
-    DatabaseReference usersref = rootref.child("Users");
+    private DatabaseReference rootref = db.getReference();
+    private DatabaseReference usersref = rootref.child("Users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-
-        mAuth = FirebaseAuth.getInstance();
 
         emailTB = findViewById(R.id.signupEmailTB);
         passTB = findViewById(R.id.signupPassTB);
@@ -55,8 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
                             if (password.equals(confirmPassword)) {
                                 signUp(email, password, name);
                                 try {
-                                    String userID = usersref.push().getKey();
-                                    DatabaseReference userData = usersref.child(userID);
+                                    DatabaseReference userData = usersref.child(user.getUid());
                                     userData.child("name").setValue(name);
                                     userData.child("email").setValue(email);
                                 } catch (Exception e) {
