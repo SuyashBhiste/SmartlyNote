@@ -16,9 +16,9 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton addBtn, textBtn, cameraBtn, micBtn, cancelBtn;
     private ArrayList<CardDetails> cardArray;
 
-//    FirebaseDatabase db = FirebaseDatabase.getInstance();
-//    DatabaseReference dbRef = db.getReference();
-//    DatabaseReference rootref = dbRef.child("NewBoy");
+    FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference dbRef = db.getReference();
+    DatabaseReference rootref = dbRef.child("Users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
         cameraBtn = findViewById(R.id.cameraBtn);
         micBtn = findViewById(R.id.micBtn);
         cancelBtn = findViewById(R.id.cancelBtn);
-
-//        rootref.setValue("hello World");
 
         rawData();
         config();

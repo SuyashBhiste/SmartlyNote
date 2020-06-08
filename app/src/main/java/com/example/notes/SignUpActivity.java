@@ -14,13 +14,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private FirebaseAuth mAuth;
     private Button signUpBtn;
     private EditText emailTB, passTB, nameTB, confirmPassTB;
     private String email, password, name, confirmPassword;
+
+    private FirebaseAuth mAuth;
+    private FirebaseDatabase db = FirebaseDatabase.getInstance();
+    DatabaseReference rootref = db.getReference();
+    DatabaseReference usersref = rootref.child("Users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +53,16 @@ public class SignUpActivity extends AppCompatActivity {
                     if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
                         if (password.length() >= 8) {
                             if (password.equals(confirmPassword)) {
-                                signUp(email, password);
+                                signUp(email, password, name);
+                                try {
+                                    String userID = usersref.push().getKey();
+                                    DatabaseReference userData = usersref.child(userID);
+                                    userData.child("name").setValue(name);
+                                    userData.child("email").setValue(email);
+                                } catch (Exception e) {
+                                    Log.w("TAG", "Firebase User Data Upload: FALIED");
+                                    System.out.println(e);
+                                }
                             } else {
                                 confirmPassTB.setError("Password didn't match");
                             }
@@ -64,7 +79,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    private void signUp(String email, String password) {
+    private void signUp(String email, String password, String name) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
