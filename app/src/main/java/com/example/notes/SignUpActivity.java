@@ -1,15 +1,15 @@
 package com.example.notes;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -20,79 +20,95 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
-    private Button signUpBtn;
-    private EditText emailTB, passTB, nameTB, confirmPassTB;
-    private String email, password, name, confirmPassword;
+    private EditText tbName, tbEmail, tbPassword, tbConfirmPassword;
 
-    private FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private FirebaseUser user = mAuth.getCurrentUser();
-    private FirebaseDatabase db = FirebaseDatabase.getInstance();
-    private DatabaseReference rootref = db.getReference();
-    private DatabaseReference usersref = rootref.child("Users");
+    private FirebaseAuth mAuth;
+    private FirebaseUser user;
+    private FirebaseDatabase db;
+    private DatabaseReference rootRef;
+    private DatabaseReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        emailTB = findViewById(R.id.signupEmailTB);
-        passTB = findViewById(R.id.signupPassTB);
-        nameTB = findViewById(R.id.nameTB);
-        confirmPassTB = findViewById(R.id.cpassTB);
-        signUpBtn = findViewById(R.id.signUpBtn);
+        tbName = findViewById(R.id.tbName);
+        tbEmail = findViewById(R.id.tbEmail);
+        tbPassword = findViewById(R.id.tbPassword);
+        tbConfirmPassword = findViewById(R.id.tbConfirmPassword);
+    }
 
-        signUpBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                email = emailTB.getText().toString();
-                password = passTB.getText().toString();
-                name = nameTB.getText().toString();
-                confirmPassword = confirmPassTB.getText().toString();
+    public void logicSignUp(View view) {
+        final String mEmail, mPassword, mName, mConfirmPassword;
 
-                if (name.length() != 0) {
-                    if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                        if (password.length() >= 8) {
-                            if (password.equals(confirmPassword)) {
-                                signUp(email, password, name);
+        mName = tbName.getText().toString();
+        mEmail = tbEmail.getText().toString();
+        mPassword = tbPassword.getText().toString();
+        mConfirmPassword = tbConfirmPassword.getText().toString();
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        db = FirebaseDatabase.getInstance();
+        rootRef = db.getReference();
+        usersRef = rootRef.child("Users");
+
+        boolean isNameNotNull = mName.length() != 0;
+        boolean isEmailPattern = Patterns.EMAIL_ADDRESS.matcher(mEmail).matches();
+        boolean isPasswordLength = mPassword.length() >= 8;
+        boolean isConfirmPassword = mPassword.equals(mConfirmPassword);
+
+        if (!isNameNotNull) {
+            tbName.setError("Field is empty.");
+        } else if (!isEmailPattern) {
+            tbEmail.setError("Invalid email");
+        } else if (!isPasswordLength) {
+            tbPassword.setError("Password must be atleast 8 characters");
+        } else if (!isConfirmPassword) {
+            tbConfirmPassword.setError("Password didn't match");
+        } else {
+            mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                //Account Created
+                                Log.i("Account created(Email)", mEmail);
+                                Log.i(mEmail, "signUpResult:success");
+
+                                //Added Details in Database
                                 try {
-                                    DatabaseReference userData = usersref.child(user.getUid());
-                                    userData.child("name").setValue(name);
-                                    userData.child("email").setValue(email);
+                                    DatabaseReference userData = usersRef.child(user.getUid());
+                                    userData.child("name").setValue(mName);
+                                    userData.child("email").setValue(mEmail);
+                                    Log.i("firebaseUserDataUpload", "Success");
                                 } catch (Exception e) {
-                                    Log.w("TAG", "Firebase User Data Upload: FALIED");
-                                    System.out.println(e);
+                                    Log.w("firebaseUserDataUpload", "Failed", e);
                                 }
+
+                                //Sent verification mail
+                                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            Toast.makeText(SignUpActivity.this, "Verification email sent to " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                                            Log.i(user.getEmail(), "Verification email sent successfully");
+                                        } else {
+                                            Log.i(user.getEmail(), "Verification email sent failed", task.getException());
+                                            Toast.makeText(SignUpActivity.this, "Failed to send verification email.", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+                                //Return to Login Activity
+                                finish();
                             } else {
-                                confirmPassTB.setError("Password didn't match");
+                                Log.w("Account created(Email)", mEmail, task.getException());
+                                Toast.makeText(SignUpActivity.this, "Account creation failed.", Toast.LENGTH_SHORT).show();
                             }
-                        }else{
-                            passTB.setError("Password must be atleast 8 characters");
                         }
-                    }else{
-                        emailTB.setError("Invalid email");
-                    }
-                }else{
-                    nameTB.setError("Field is empty");
-                }
-            }
-        });
+                    });
+        }
     }
 
-    private void signUp(String email, String password, String name) {
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d("TAG", "createUserWithEmail:success");
-                            Intent signup2Login = new Intent(SignUpActivity.this, LoginActivity.class);
-                            startActivity(signup2Login);
-                            finish();
-                        } else {
-                            Log.w("TAG", "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(SignUpActivity.this, "Account already created", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-    }
 }

@@ -1,81 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linerlayoutsignup"
-    android:layout_width="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="15dp"
-    tools:context=".SignUpActivity">
+    android:layout_width="match_parent"
+    android:id="@+id/scrollViewSignUp">
 
-    <ImageView
-        android:id="@+id/imageViewLogo"
-        android:layout_width="match_parent"
-        android:layout_height="125dp"
-        android:layout_weight="1"
-        android:contentDescription="@string/str_companyname_name"
-        android:minHeight="150dp"
-        app:srcCompat="@drawable/ic_appicon" />
-
-    <EditText
-        android:id="@+id/nameTB"
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/linerLayoutSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:ems="10"
-        android:hint="@string/str_displayname_name"
-        android:inputType="textEmailAddress"
-        android:textSize="20sp" />
+        android:orientation="vertical"
+        android:padding="15dp"
+        tools:context=".SignUpActivity">
 
-    <EditText
-        android:id="@+id/signupEmailTB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:ems="10"
-        android:hint="@string/str_email"
-        android:inputType="textEmailAddress"
-        android:textSize="20sp" />
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/str_companyname_name"
+            android:minHeight="150dp"
+            app:srcCompat="@drawable/ic_appicon" />
 
-    <EditText
-        android:id="@+id/signupPassTB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:ems="10"
-        android:hint="@string/str_password"
-        android:inputType="textPassword"
-        android:textSize="20sp" />
+        <EditText
+            android:id="@+id/tbName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/str_displayname_name"
+            android:inputType="textEmailAddress"
+            android:textSize="20sp"
+            android:autofillHints="Enter your name" />
 
+        <EditText
+            android:id="@+id/tbEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/str_email"
+            android:inputType="textEmailAddress"
+            android:textSize="20sp"
+            android:autofillHints="Enter your email" />
 
-    <EditText
-        android:id="@+id/cpassTB"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="20dp"
-        android:layout_weight="1"
-        android:ems="10"
-        android:hint="@string/str_confirmpassword_name"
-        android:inputType="textPassword"
-        android:textSize="20sp" />
+        <EditText
+            android:id="@+id/tbPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/str_password"
+            android:inputType="textPassword"
+            android:textSize="20sp"
+            android:autofillHints="Enter your password" />
 
-    <Button
-        android:id="@+id/signUpBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:layout_marginBottom="15dp"
-        android:layout_weight="1"
-        android:background="#4CAF50"
-        android:shadowRadius="10"
-        android:text="@string/str_signup_name" />
+        <EditText
+            android:id="@+id/tbConfirmPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:hint="@string/str_confirmpassword_name"
+            android:inputType="textPassword"
+            android:textSize="20sp"
+            android:autofillHints="Enter same password" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="15dp"
+            android:layout_weight="1"
+            android:background="#4CAF50"
+            android:shadowRadius="10"
+            android:text="@string/str_signup_name"
+            android:onClick="logicSignUp" />
+
+    </LinearLayout>
+
+</ScrollView>
