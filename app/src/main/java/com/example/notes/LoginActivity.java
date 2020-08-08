@@ -196,6 +196,9 @@ public class LoginActivity extends AppCompatActivity {
                             Log.i("Hi3", "3");
                             userData.child("email").setValue(mEmail);
                             Log.i("firebaseUserDataUpload", "Success");
+                             Intent toMainActivity = new Intent(LoginActivity.this, MainActivity.class);
+                            startActivity(toMainActivity);
+                            finish();
                         } catch (Exception e) {
                             Log.w("firebaseUserDataUpload", "Failed", e);
                         }
@@ -206,9 +209,7 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("Account created(Google)", mEmail);
             Log.i(mEmail, "signInResult:success");
 
-            Intent toMainActivity = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(toMainActivity);
-            finish();
+           
         } catch (ApiException e) {
             Toast.makeText(LoginActivity.this, "Failure", Toast.LENGTH_SHORT).show();
             Log.w("Google Login", "signInResult:failed code=" + e.getStatusCode());
