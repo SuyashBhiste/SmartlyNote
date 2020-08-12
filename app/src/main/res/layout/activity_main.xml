@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/clMain"
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
@@ -8,18 +10,37 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/rlMain"
         tools:context=".MainActivity">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/rvMain"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="4dp"
-            android:scrollbars="vertical"
-            />
+            android:scrollbars="vertical" />
 
     </RelativeLayout>
 
-    <include layout="@layout/activity_fab" />
+    <FrameLayout android:id="@+id/flFab"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:onClick="addPressed"
+            android:layout_margin="1dp"
+            android:backgroundTint="#3498DB"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:srcCompat="@drawable/ic_add" />
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

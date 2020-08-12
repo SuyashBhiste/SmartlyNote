@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="6dp"
+    android:id="@+id/cvCard"
     android:layout_marginVertical="8dp"
     android:focusable="true"
     android:clickable="true"
@@ -15,10 +16,11 @@
         android:layout_height="match_parent"
         android:orientation="horizontal"
         android:weightSum="20"
+        android:id="@+id/llCard"
         android:background="#c1c1c1">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="6dp"
@@ -28,12 +30,13 @@
             />
 
         <ImageButton
-            android:id="@+id/delete"
+            android:id="@+id/btDelete"
             android:layout_width="wrap_content"
             android:layout_margin="1dp"
             android:layout_weight="2"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_menu_delete" />
+            app:srcCompat="@android:drawable/ic_menu_delete"
+            android:contentDescription="Delete note" />
 
 
     </LinearLayout>

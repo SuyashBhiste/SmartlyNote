@@ -1,13 +1,47 @@
 package com.example.notes;
 
-public class CardDetails {
-    private String title;
+import android.net.Uri;
 
-    public CardDetails(String text) {
-        title = text;
+import com.google.firebase.storage.StorageReference;
+
+public class CardDetails {
+    private String mTitle;
+    private String mDate;
+    private String mTime;
+    private String mDescription;
+    private Uri mImage;
+    private Uri mAudio;
+
+    public CardDetails(String mTitle, String mDate, String mTime, String mDescription, Uri mImage, Uri mAudio) {
+        this.mTitle = mTitle;
+        this.mDate = mDate;
+        this.mTime = mTime;
+        this.mDescription = mDescription;
+        this.mImage = mImage;
+        this.mAudio = mAudio;
     }
 
-    public String getTitle() {
-        return title;
+    public String getmTitle() {
+        return mTitle;
+    }
+
+    public String getmDate() {
+        return mDate;
+    }
+
+    public String getmTime() {
+        return mTime;
+    }
+
+    public String getmDescription() {
+        return mDescription;
+    }
+
+    public Uri getmImage() {
+        return mImage;
+    }
+
+    public Uri getmAudio() {
+        return mAudio;
     }
 }

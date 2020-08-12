@@ -6,27 +6,18 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import static com.example.notes.LoginActivity.mAuth;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText tbName, tbEmail, tbPassword, tbConfirmPassword;
-
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
-    private FirebaseDatabase db;
-    private DatabaseReference rootRef;
-    private DatabaseReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +38,7 @@ public class SignUpActivity extends AppCompatActivity {
         mPassword = tbPassword.getText().toString();
         mConfirmPassword = tbConfirmPassword.getText().toString();
 
-        mAuth = FirebaseAuth.getInstance();
-        user = mAuth.getCurrentUser();
-        db = FirebaseDatabase.getInstance();
-        rootRef = db.getReference();
-        usersRef = rootRef.child("Users");
+        final FirebaseUser user = mAuth.getCurrentUser();
 
         boolean isNameNotNull = mName.length() != 0;
         boolean isEmailPattern = Patterns.EMAIL_ADDRESS.matcher(mEmail).matches();
@@ -78,7 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                                 //Added Details in Database
                                 try {
-                                    DatabaseReference userData = usersRef.child(user.getUid());
+                                    DatabaseReference userData = LoginActivity.usersRef.child(user.getUid());
                                     userData.child("name").setValue(mName);
                                     userData.child("email").setValue(mEmail);
                                     Log.i("firebaseUserDataUpload", "Success");

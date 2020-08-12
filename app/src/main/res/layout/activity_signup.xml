@@ -2,11 +2,11 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:id="@+id/scrollViewSignUp">
+    android:id="@+id/svSignUp">
 
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/linerLayoutSignUp"
+        android:id="@+id/llSignUp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"

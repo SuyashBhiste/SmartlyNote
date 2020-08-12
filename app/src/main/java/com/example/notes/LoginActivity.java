@@ -1,5 +1,6 @@
 package com.example.notes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,10 +9,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -33,11 +32,11 @@ public class LoginActivity extends AppCompatActivity {
     private ImageView ivLogo;
     private EditText etEmail, etPassword;
     private SignInButton btGoogleLogIn;
-    private FirebaseAuth mAuth;
-    private FirebaseUser user;
-    private FirebaseDatabase db;
-    private DatabaseReference rootRef;
-    private DatabaseReference usersRef;
+    static FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    private FirebaseUser user = mAuth.getCurrentUser();
+    private static FirebaseDatabase db = FirebaseDatabase.getInstance();
+    private static DatabaseReference rootRef = db.getReference();
+    static DatabaseReference usersRef = rootRef.child("Users");
     private static int RC_SIGN_IN = 12354;
 
     @Override
@@ -49,11 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.tbEmail);
         etPassword = findViewById(R.id.tbPassword);
         btGoogleLogIn = findViewById(R.id.btGoogleLogIn);
-
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseDatabase.getInstance();
-        rootRef = db.getReference();
-        usersRef = rootRef.child("Users");
 
         ivLogo.getLayoutParams().height = 400;
 
@@ -69,18 +63,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-
-        if (currentUser != null && currentUser.isEmailVerified()) {
-            Log.i(currentUser.getEmail(), "Already Signed In: TRUE");
-            Intent login2Main = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(login2Main);
-        } else if (account != null) {
-            Log.i(account.getEmail(), "Already Signed In: TRUE");
-            Intent login2Main = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(login2Main);
+        if (user != null && user.isEmailVerified()) {
+            Log.i(user.getEmail(), "Already Signed In: TRUE");
+            logicChangeIntent(MainActivity.class);
         }
     }
 
@@ -98,8 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                                     Log.i(mEmail, "signInWithEmail:success");
                                     final FirebaseUser user = mAuth.getCurrentUser();
                                     if (user.isEmailVerified()) {
-                                        Intent toMainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(toMainActivity);
+                                        logicChangeIntent(MainActivity.class);
                                         finish();
                                     } else {
                                         user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -112,11 +96,11 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
                                             }
                                         });
-                                        Toast.makeText(LoginActivity.this, "Email ID is not verified. Check your mail", Toast.LENGTH_SHORT).show();
+                                        logicToaster(LoginActivity.this, "Email ID is not verified. Check your mail");
                                     }
                                 } else {
                                     Log.w(mEmail, "signInWithEmail:failure", task.getException());
-                                    Toast.makeText(LoginActivity.this, "Invalid email or password.", Toast.LENGTH_SHORT).show();
+                                    logicToaster(LoginActivity.this, "Invalid email or password.");
                                 }
                             }
                         });
@@ -136,9 +120,9 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(LoginActivity.this, "Reset link sent to mail.", Toast.LENGTH_LONG).show();
+                        logicToaster(LoginActivity.this, "Reset link sent to mail.");
                     } else {
-                        Toast.makeText(LoginActivity.this, "Email ID is not registered.", Toast.LENGTH_SHORT).show();
+                        logicToaster(LoginActivity.this, "Email ID is not registered.");
                     }
                 }
             });
@@ -184,20 +168,14 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Log.i("User data added", mEmail);
                         user = mAuth.getCurrentUser();
-                        Log.i("Hi", "i");
                         //Added Details in Database
                         try {
-                            Log.i("Hi1", "1");
                             DatabaseReference userData = usersRef.child(user.getUid());
-                            Log.i("Hi2", "2");
                             userData.child("name").setValue(mName);
-                            Log.i("Hi3", "3");
                             userData.child("email").setValue(mEmail);
                             Log.i("firebaseUserDataUpload", "Success");
-                             Intent toMainActivity = new Intent(LoginActivity.this, MainActivity.class);
-                            startActivity(toMainActivity);
+                            logicChangeIntent(MainActivity.class);
                             finish();
                         } catch (Exception e) {
                             Log.w("firebaseUserDataUpload", "Failed", e);
@@ -209,16 +187,22 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("Account created(Google)", mEmail);
             Log.i(mEmail, "signInResult:success");
 
-           
         } catch (ApiException e) {
-            Toast.makeText(LoginActivity.this, "Failure", Toast.LENGTH_SHORT).show();
+            logicToaster(this, "Failure");
             Log.w("Google Login", "signInResult:failed code=" + e.getStatusCode());
         }
     }
 
     public void logicSignUp(View view) {
-        Intent toSignUp = new Intent(LoginActivity.this, SignUpActivity.class);
-        startActivity(toSignUp);
+        logicChangeIntent(SignUpActivity.class);
     }
 
+    public void logicChangeIntent(Class destination) {
+        Intent changeIntent = new Intent(LoginActivity.this, destination);
+        startActivity(changeIntent);
+    }
+
+    public void logicToaster(Context mContext, String message) {
+        Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+    }
 }

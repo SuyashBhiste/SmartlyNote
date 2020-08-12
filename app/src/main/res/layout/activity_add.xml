@@ -3,17 +3,19 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/svText"
     android:layout_height="match_parent"
     android:layout_width="match_parent" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".TextActivity"
+        android:id="@+id/llText"
+        tools:context=".AddActivity"
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textBoxTitle"
+            android:id="@+id/tilTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -23,7 +25,7 @@
             android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/title"
+                android:id="@+id/tietTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
@@ -35,12 +37,12 @@
                 android:textStyle="normal" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textBoxDesc"
+                android:id="@+id/tilDescription"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/desc"
+                    android:id="@+id/tietDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
@@ -48,6 +50,7 @@
                     android:autoLink="all"
                     android:background="@color/whitish_grey"
                     android:hint="@string/str_desc_name"
+                    android:paddingHorizontal="5dp"
                     android:paddingTop="10dp"
                     android:paddingBottom="10dp"
                     android:textSize="22sp" />
@@ -55,8 +58,39 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/llImageAudio"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="25dp"
+            style="?android:attr/buttonBarStyle"
+            android:weightSum="2">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btImage"
+                android:layout_weight="1"
+                android:layout_marginEnd="20dp"
+                android:onClick="logicImage"
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="Add Image" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btAudio"
+                android:layout_marginStart="20dp"
+                android:onClick="logicAudio"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:text="Add Audio" />
+
+        </LinearLayout>
+
         <Switch
-            android:id="@+id/remindMeSwitch"
+            android:id="@+id/sRemindMe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -68,7 +102,7 @@
             android:textSize="20sp" />
 
         <TextView
-            android:id="@+id/dateBox"
+            android:id="@+id/tvDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
@@ -77,11 +111,11 @@
             android:layout_marginStart="30sp"
             android:text="@string/str_date_name"
             android:textSize="20sp"
-            android:onClick="datePick"
+            android:onClick="logicDate"
             android:visibility="invisible" />
 
         <TextView
-            android:id="@+id/timeBox"
+            android:id="@+id/tvTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -90,7 +124,7 @@
             android:layout_marginStart="30sp"
             android:text="@string/str_time_name"
             android:textSize="20sp"
-            android:onClick="timePick"
+            android:onClick="logicTime"
             android:visibility="invisible" />
 
     </LinearLayout>
