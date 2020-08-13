@@ -140,12 +140,18 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
-    public void upload(StorageReference fileName, Uri uri) {
+    public void upload(final StorageReference fileName, Uri uri) {
         fileName.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Toast.makeText(AddActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
                 mProgressDialog.dismiss();
+                fileName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        uriImage=uri;
+                    }
+                });
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -219,7 +225,7 @@ public class AddActivity extends AppCompatActivity {
         uniqueRef.child("Date").setValue(cd.getmDate());
         uniqueRef.child("Time").setValue(cd.getmTime());
         uniqueRef.child("Description").setValue(cd.getmDescription());
-//        uniqueRef.child("Image").setValue(cd.getmImage());
+        uniqueRef.child("Image").setValue(String.valueOf(cd.getmImage()));
 //        uniqueRef.child("Audio").setValue(cd.getmAudio());
     }
 
