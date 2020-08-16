@@ -1,47 +1,71 @@
 package com.example.notes;
 
-import android.net.Uri;
-
-import com.google.firebase.storage.StorageReference;
-
 public class CardDetails {
-    private String mTitle;
-    private String mDate;
-    private String mTime;
-    private String mDescription;
-    private Uri mImage;
-    private Uri mAudio;
+    private String Title;
+    private String Date;
+    private String Time;
+    private String Description;
+    private String Image;
+    private String Audio;
 
-    public CardDetails(String mTitle, String mDate, String mTime, String mDescription, Uri mImage, Uri mAudio) {
-        this.mTitle = mTitle;
-        this.mDate = mDate;
-        this.mTime = mTime;
-        this.mDescription = mDescription;
-        this.mImage = mImage;
-        this.mAudio = mAudio;
+    public CardDetails(String Title, String Date, String Time, String Description, String Image, String Audio) {
+        this.Title = Title;
+        this.Date = Date;
+        this.Time = Time;
+        this.Description = Description;
+        this.Image = Image;
+        this.Audio = Audio;
     }
 
-    public String getmTitle() {
-        return mTitle;
+    public CardDetails() {
+
     }
 
-    public String getmDate() {
-        return mDate;
+    public String getTitle() {
+        return Title;
     }
 
-    public String getmTime() {
-        return mTime;
+    public void setTitle(String Title) {
+        this.Title = Title;
     }
 
-    public String getmDescription() {
-        return mDescription;
+    public String getDate() {
+        return Date;
     }
 
-    public Uri getmImage() {
-        return mImage;
+    public void setDate(String Date) {
+        this.Date = Date;
     }
 
-    public Uri getmAudio() {
-        return mAudio;
+    public String getTime() {
+        return Time;
+    }
+
+    public void setTime(String Time) {
+        this.Time = Time;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String Description) {
+        this.Description = Description;
+    }
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String Image) {
+        this.Image = Image;
+    }
+
+    public String getAudio() {
+        return Audio;
+    }
+
+    public void setAudio(String Audio) {
+        this.Audio = Audio;
     }
 }
