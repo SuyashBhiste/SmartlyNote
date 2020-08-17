@@ -55,7 +55,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
 //                    detailsArray.remove(pos);
 //                    notifyItemRemoved(pos);
                     AddActivity.notesRef.child(String.valueOf(pos)).removeValue();
-//                    notifyDataSetChanged();
+                    notifyDataSetChanged();
                 }
             });
 

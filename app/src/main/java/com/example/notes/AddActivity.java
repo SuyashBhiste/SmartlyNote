@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +15,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
-import android.widget.Switch;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -22,8 +25,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +36,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.IOException;
 import java.util.Calendar;
 
 import static com.example.notes.LoginActivity.usersRef;
@@ -39,36 +45,39 @@ import static com.example.notes.MainActivity.count;
 
 public class AddActivity extends AppCompatActivity {
 
-    private TextInputEditText tietTitle, tietDescription;
     static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    private Switch sRemindMe;
+    static DatabaseReference uidRef = usersRef.child(mAuth.getCurrentUser().getUid());
+    static DatabaseReference notesRef = uidRef.child("Notes");
+    private static int IMAGE_REQUEST_CODE = 45632;
+    private static int AUDIO_REQUEST_CODE = 43652;
+    boolean swCheck = false;
+    private TextInputEditText tietTitle, tietDescription;
+    private SwitchMaterial sRemindMe;
     private TextView tvDate, tvTime;
-
+    private ImageView ivImage;
+    private ImageButton ibAudio;
+    private MediaPlayer mediaPlayer;
     private String mTitle;
     private String mDescription;
     private String mDate;
     private String mTime;
-    static DatabaseReference uidRef = usersRef.child(mAuth.getCurrentUser().getUid());
+    private boolean play = true;
     private int mDay;
     private int mMonth;
     private int mYear;
     private int mHour;
     private int mMinute;
-    private static int i = 0;
-    boolean swCheck = false;
-    static DatabaseReference notesRef = uidRef.child("Notes");
     private Calendar cal;
     private Uri uriImage;
     private Uri uriAudio;
     private Button btImage, btAudio;
     private int pos;
+    private int once = 1;
     private DatabaseReference uniqueRef;
     private StorageReference mStorage;
     private StorageReference imageName;
     private StorageReference audioName;
     private ProgressDialog mProgressDialog;
-    private static int IMAGE_REQUEST_CODE = 45632;
-    private static int AUDIO_REQUEST_CODE = 43652;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +91,9 @@ public class AddActivity extends AppCompatActivity {
         sRemindMe = findViewById(R.id.sRemindMe);
         tvDate = findViewById(R.id.tvDate);
         tvTime = findViewById(R.id.tvTime);
+        ivImage = findViewById(R.id.ivSavedImage);
+        ibAudio = findViewById(R.id.ibSavedAudio);
+        mediaPlayer = new MediaPlayer();
 
         cal = Calendar.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
@@ -99,25 +111,59 @@ public class AddActivity extends AppCompatActivity {
             tvDate.setText(bundle.getString("sendDate"));
             tvTime.setText(bundle.getString("sendTime"));
             pos = Integer.parseInt(bundle.getString("sendPos"));
-            btImage.setText("View Image");
-            btAudio.setText("Listen Audio");
 
-            btImage.setOnClickListener(new View.OnClickListener() {
+            btImage.setVisibility(View.GONE);
+            btAudio.setVisibility(View.GONE);
+            ivImage.setVisibility(View.VISIBLE);
+            Glide.with(this)
+                    .load(Uri.parse(bundle.getString("sendImage")))
+                    .into(ivImage);
+            ibAudio.setVisibility(View.VISIBLE);
+
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            try {
+                mediaPlayer.setDataSource(bundle.getString("sendAudio"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mediaPlayer.prepareAsync();
+
+            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(bundle.getString("sendImage")));
-                    startActivity(i);
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    ibAudio.setImageResource(R.drawable.ic_play);
                 }
             });
-            btAudio.setOnClickListener(new View.OnClickListener() {
+
+            ibAudio.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(bundle.getString("sendAudio")));
-                    startActivity(i);
+                    if (once == 1) {
+                        mProgressDialog.setMessage("Loading...");
+                        mProgressDialog.show();
+                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                            @Override
+                            public void onPrepared(MediaPlayer mediaPlayer) {
+                                mProgressDialog.dismiss();
+                            }
+                        });
+                        once++;
+                    } else {
+                        if (!mediaPlayer.isPlaying()) {
+                            ibAudio.setImageResource(R.drawable.ic_pause);
+                            mediaPlayer.start();
+                            play = false;
+                        } else {
+                            ibAudio.setImageResource(R.drawable.ic_play);
+                            play = true;
+                            mediaPlayer.pause();
+                        }
+                    }
                 }
             });
 
             sRemindMe.setChecked(true);
+            swCheck = true;
             tvDate.setVisibility(View.VISIBLE);
             tvTime.setVisibility(View.VISIBLE);
             Log.i("No preData", "False");
@@ -125,24 +171,6 @@ public class AddActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.i("No preData", "True");
             pos = -1;
-
-            btImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent toImageGalley = new Intent(Intent.ACTION_PICK);
-                    toImageGalley.setType("image/*");
-                    startActivityForResult(toImageGalley, IMAGE_REQUEST_CODE);
-                }
-            });
-
-            btAudio.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent toAudioGallery = new Intent(Intent.ACTION_PICK);
-                    toAudioGallery.setType("audio/*");
-                    startActivityForResult(toAudioGallery, AUDIO_REQUEST_CODE);
-                }
-            });
 
             sRemindMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -160,6 +188,18 @@ public class AddActivity extends AppCompatActivity {
             });
         }
 
+    }
+
+    public void logicImage(View view) {
+        Intent toImageGalley = new Intent(Intent.ACTION_PICK);
+        toImageGalley.setType("image/*");
+        startActivityForResult(toImageGalley, IMAGE_REQUEST_CODE);
+    }
+
+    public void logicAudio(View view) {
+        Intent toAudioGallery = new Intent(Intent.ACTION_PICK);
+        toAudioGallery.setType("audio/*");
+        startActivityForResult(toAudioGallery, AUDIO_REQUEST_CODE);
     }
 
     @Override
@@ -260,8 +300,7 @@ public class AddActivity extends AppCompatActivity {
                 }
 
                 uploadData(cd);
-
-//                adapter.notifyDataSetChanged();
+//                MainActivity.adapter.notifyDataSetChanged();
 
                 Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
                 finish();

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/svText"
     android:layout_height="match_parent"
-    android:layout_width="match_parent" >
+    android:layout_width="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:id="@+id/llText"
         tools:context=".AddActivity"
         android:orientation="vertical">
@@ -89,7 +88,29 @@
 
         </LinearLayout>
 
-        <Switch
+        <ImageView
+            android:id="@+id/ivSavedImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:contentDescription="Image saved"
+            android:visibility="visible" />
+
+        <ImageButton
+            android:id="@+id/ibSavedAudio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="20dp"
+            android:background="#ffffff"
+            android:contentDescription="Audio saved"
+            android:scaleType="centerInside"
+            android:scaleX="3.0"
+            android:scaleY="3.0"
+            android:src="@drawable/ic_play"
+            android:visibility="visible" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/sRemindMe"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -127,7 +148,7 @@
             android:onClick="logicTime"
             android:visibility="invisible" />
 
+
     </LinearLayout>
 
 </ScrollView>
-

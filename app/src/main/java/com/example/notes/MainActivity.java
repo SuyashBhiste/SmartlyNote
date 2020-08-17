@@ -39,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new CustomAdapter(cardArray);
         recyclerView.setAdapter(adapter);
+        System.out.println("get");
         getData();
-
+        System.out.println("lol");
     }
 
     private void getData() {
-        AddActivity.notesRef.addValueEventListener(new ValueEventListener() {
+        AddActivity.notesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot datasnapshot) {
                 count = (int) datasnapshot.getChildrenCount();
@@ -52,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
                     CardDetails user = snapshot.getValue(CardDetails.class);
                     cardArray.add(user);
                 }
+                System.out.println("Data Fetched from Firebase");
                 adapter.notifyDataSetChanged();
+
             }
 
             @Override
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 
     public void addPressed(View view) {
