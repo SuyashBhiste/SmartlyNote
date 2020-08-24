@@ -53,7 +53,7 @@
             android:layout_marginBottom="15dp"
             android:background="#4CAF50"
             android:text="@string/str_login_name"
-            android:onClick="logicLogIn" />
+            android:onClick="logIn" />
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btGoogleLogIn"
@@ -68,7 +68,7 @@
             android:textAlignment="center"
             android:textColor="#0A00EC"
             android:textColorLink="#0010C5"
-            android:onClick="logicForgetPassword" />
+            android:onClick="forgetPassword" />
 
         <Button
             android:id="@+id/btSignUp"
@@ -78,7 +78,7 @@
             android:layout_marginBottom="15dp"
             android:background="#3F51B5"
             android:text="@string/str_createnewaccount_name"
-            android:onClick="logicSignUp" />
+            android:onClick="signUp" />
 
     </LinearLayout>
 

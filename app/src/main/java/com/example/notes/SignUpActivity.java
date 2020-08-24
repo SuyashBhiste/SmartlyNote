@@ -13,14 +13,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-
-import static com.example.notes.LoginActivity.mAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
 
+    //XML Attributes
     private EditText tbName, tbEmail, tbPassword, tbConfirmPassword;
+
+    //Firebase Declarations
+    private FirebaseAuth auth;
+    private FirebaseUser user;
+    private DatabaseReference rootRef;
+    private DatabaseReference usersRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,13 +43,19 @@ public class SignUpActivity extends AppCompatActivity {
     public void logicSignUp(View view) {
         final String mEmail, mPassword, mName, mConfirmPassword;
 
+        //Assign Id's
         mName = tbName.getText().toString();
         mEmail = tbEmail.getText().toString();
         mPassword = tbPassword.getText().toString();
         mConfirmPassword = tbConfirmPassword.getText().toString();
 
-        final FirebaseUser user = mAuth.getCurrentUser();
+        //Initialization
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        rootRef = FirebaseDatabase.getInstance().getReference();
+        usersRef = rootRef.child("Users");
 
+        //Validate Input Data
         boolean isNameNotNull = mName.length() != 0;
         boolean isEmailPattern = Patterns.EMAIL_ADDRESS.matcher(mEmail).matches();
         boolean isPasswordLength = mPassword.length() >= 8;
@@ -57,7 +70,7 @@ public class SignUpActivity extends AppCompatActivity {
         } else if (!isConfirmPassword) {
             tbConfirmPassword.setError("Password didn't match");
         } else {
-            mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
+            auth.createUserWithEmailAndPassword(mEmail, mPassword)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
@@ -68,7 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                                 //Added Details in Database
                                 try {
-                                    DatabaseReference userData = LoginActivity.usersRef.child(user.getUid());
+                                    DatabaseReference userData = usersRef.child(user.getUid());
                                     userData.child("name").setValue(mName);
                                     userData.child("email").setValue(mEmail);
                                     Log.i("firebaseUserDataUpload", "Success");

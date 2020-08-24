@@ -3,9 +3,11 @@ package com.example.notes;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,279 +32,348 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.IOException;
+import java.net.InetAddress;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
-import static com.example.notes.LoginActivity.usersRef;
 import static com.example.notes.MainActivity.cardArray;
-import static com.example.notes.MainActivity.count;
 
 public class AddActivity extends AppCompatActivity {
 
-    static FirebaseAuth mAuth = FirebaseAuth.getInstance();
-    static DatabaseReference uidRef = usersRef.child(mAuth.getCurrentUser().getUid());
+    //Firebase Declarations
+    static FirebaseAuth auth = FirebaseAuth.getInstance();
+    static FirebaseUser user = auth.getCurrentUser();
+    static FirebaseDatabase db = FirebaseDatabase.getInstance();
+    static DatabaseReference rootRef = db.getReference();
+    static DatabaseReference usersRef = rootRef.child("Users");
+    static DatabaseReference uidRef = usersRef.child(user.getUid());
+    //XML Attributes
+    private TextInputEditText tbTitle, tbDescription;
+    private TextView tvDate, tvTime;
+    private SwitchMaterial swRemind;
+    private Button btImage, btAudio;
+    private ImageView ivImage;
+    private ImageButton ibtAudio;
     static DatabaseReference notesRef = uidRef.child("Notes");
+    private Calendar cal = Calendar.getInstance();
+    private Date timy, daty;
     private static int IMAGE_REQUEST_CODE = 45632;
     private static int AUDIO_REQUEST_CODE = 43652;
-    boolean swCheck = false;
-    private TextInputEditText tietTitle, tietDescription;
-    private SwitchMaterial sRemindMe;
-    private TextView tvDate, tvTime;
-    private ImageView ivImage;
-    private ImageButton ibAudio;
+
+    //Firebase Storage Declarations
+    private StorageReference storage;
+    private ProgressDialog progressDialog;
+
+    //Services Declarations
     private MediaPlayer mediaPlayer;
+    private Bundle bundle;
+    private Uri uriImage, uriAudio;
+
     private String mTitle;
     private String mDescription;
     private String mDate;
     private String mTime;
-    private boolean play = true;
-    private int mDay;
-    private int mMonth;
-    private int mYear;
-    private int mHour;
-    private int mMinute;
-    private Calendar cal;
-    private Uri uriImage;
-    private Uri uriAudio;
-    private Button btImage, btAudio;
     private int pos;
-    private int once = 1;
-    private DatabaseReference uniqueRef;
-    private StorageReference mStorage;
-    private StorageReference imageName;
-    private StorageReference audioName;
-    private ProgressDialog mProgressDialog;
+    private boolean check;
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            return !ipAddr.equals("");
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
-        tietTitle = findViewById(R.id.tietTitle);
-        tietDescription = findViewById(R.id.tietDescription);
+        //Assign Id's
+        tbTitle = findViewById(R.id.tietTitle);
+        tbDescription = findViewById(R.id.tietDescription);
         btImage = findViewById(R.id.btImage);
         btAudio = findViewById(R.id.btAudio);
-        sRemindMe = findViewById(R.id.sRemindMe);
+        swRemind = findViewById(R.id.swRemind);
         tvDate = findViewById(R.id.tvDate);
         tvTime = findViewById(R.id.tvTime);
         ivImage = findViewById(R.id.ivSavedImage);
-        ibAudio = findViewById(R.id.ibSavedAudio);
+        ibtAudio = findViewById(R.id.ibSavedAudio);
+
+        //Initialization
         mediaPlayer = new MediaPlayer();
+        storage = FirebaseStorage.getInstance().getReference();
+        progressDialog = new ProgressDialog(this);
+        check = false;
 
-        cal = Calendar.getInstance();
-        mStorage = FirebaseStorage.getInstance().getReference();
-        mProgressDialog = new ProgressDialog(this);
-        mDay = cal.get(Calendar.DATE);
-        mMonth = cal.get(Calendar.MONTH);
-        mYear = cal.get(Calendar.YEAR);
-        mHour = cal.get(Calendar.HOUR_OF_DAY);
-        mMinute = cal.get(Calendar.MINUTE);
-
-        try {
-            final Bundle bundle = getIntent().getExtras();
-            tietTitle.setText(bundle.getString("sendTitle"));
-            tietDescription.setText(bundle.getString("sendDescription"));
-            tvDate.setText(bundle.getString("sendDate"));
-            tvTime.setText(bundle.getString("sendTime"));
+        try { //Edit Note
+            //Getting Card Position
+            bundle = getIntent().getExtras();
             pos = Integer.parseInt(bundle.getString("sendPos"));
-
-            btImage.setVisibility(View.GONE);
-            btAudio.setVisibility(View.GONE);
-            ivImage.setVisibility(View.VISIBLE);
-            Glide.with(this)
-                    .load(Uri.parse(bundle.getString("sendImage")))
-                    .into(ivImage);
-            ibAudio.setVisibility(View.VISIBLE);
-
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            try {
-                mediaPlayer.setDataSource(bundle.getString("sendAudio"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            mediaPlayer.prepareAsync();
-
-            mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    ibAudio.setImageResource(R.drawable.ic_play);
-                }
-            });
-
-            ibAudio.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (once == 1) {
-                        mProgressDialog.setMessage("Loading...");
-                        mProgressDialog.show();
-                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @Override
-                            public void onPrepared(MediaPlayer mediaPlayer) {
-                                mProgressDialog.dismiss();
-                            }
-                        });
-                        once++;
-                    } else {
-                        if (!mediaPlayer.isPlaying()) {
-                            ibAudio.setImageResource(R.drawable.ic_pause);
-                            mediaPlayer.start();
-                            play = false;
-                        } else {
-                            ibAudio.setImageResource(R.drawable.ic_play);
-                            play = true;
-                            mediaPlayer.pause();
-                        }
-                    }
-                }
-            });
-
-            sRemindMe.setChecked(true);
-            swCheck = true;
-            tvDate.setVisibility(View.VISIBLE);
-            tvTime.setVisibility(View.VISIBLE);
-            Log.i("No preData", "False");
-
-        } catch (Exception e) {
-            Log.i("No preData", "True");
+            fnEdit();
+        } catch (Exception e) { //New Note
             pos = -1;
-
-            sRemindMe.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean status) {
-                    if (status) {
-                        tvDate.setVisibility(View.VISIBLE);
-                        tvTime.setVisibility(View.VISIBLE);
-                        swCheck = true;
-                    } else {
-                        tvDate.setVisibility(View.INVISIBLE);
-                        tvTime.setVisibility(View.INVISIBLE);
-                        swCheck = false;
-                    }
-                }
-            });
         }
 
     }
 
-    public void logicImage(View view) {
-        Intent toImageGalley = new Intent(Intent.ACTION_PICK);
-        toImageGalley.setType("image/*");
-        startActivityForResult(toImageGalley, IMAGE_REQUEST_CODE);
+    //Edit Note
+    public void fnEdit() {
+        //Fetch & set details from card
+        tbTitle.setText(bundle.getString("sendTitle"));
+        tbDescription.setText(bundle.getString("sendDescription"));
+        tvDate.setText(bundle.getString("sendDate"));
+        tvTime.setText(bundle.getString("sendTime"));
+
+        //Handling Visibility
+        if (!tvDate.getText().equals("") || !tvTime.getText().equals("")) {
+            swRemind.setChecked(true);
+            tvDate.setVisibility(View.VISIBLE);
+            tvTime.setVisibility(View.VISIBLE);
+        }
+
+        btImage.setVisibility(View.GONE);
+        btAudio.setVisibility(View.GONE);
+
+        if (!bundle.getString("sendImage").isEmpty()) {
+            ivImage.setVisibility(View.VISIBLE);
+
+            //Assign Assets
+            Glide.with(this)
+                    .load(Uri.parse(bundle.getString("sendImage")))
+                    .into(ivImage);
+        }
+
+        if (!bundle.getString("sendAudio").isEmpty()) {
+            ibtAudio.setVisibility(View.VISIBLE);
+
+            //Assign Assets
+            try {
+                progressDialog.setMessage("Loading....");
+                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mediaPlayer.setDataSource(bundle.getString("sendAudio"));
+                mediaPlayer.prepareAsync();
+                progressDialog.show();
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        progressDialog.dismiss();
+                    }
+                });
+                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        ibtAudio.setImageResource(R.drawable.ic_play);
+                    }
+                });
+            } catch (Exception e) {
+                Log.w("Audio fetch", "ERROR", e);
+            }
+        }
     }
 
-    public void logicAudio(View view) {
+    public void audio(View view) {
+        if (mediaPlayer.isPlaying()) {
+            ibtAudio.setImageResource(R.drawable.ic_play);
+            mediaPlayer.pause();
+        } else {
+            mediaPlayer.start();
+            ibtAudio.setImageResource(R.drawable.ic_pause);
+        }
+    }
+
+    public void fnSwitch(View view) {
+        if (check) {
+            swRemind.setChecked(false);
+            tvDate.setVisibility(View.GONE);
+            tvTime.setVisibility(View.GONE);
+            check = false;
+        } else {
+            swRemind.setChecked(true);
+            tvDate.setVisibility(View.VISIBLE);
+            tvTime.setVisibility(View.VISIBLE);
+            check = true;
+            Toast.makeText(AddActivity.this, "Notification feature coming soon...", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void fnImage(View view) {
+        Intent toImageGalley = new Intent(Intent.ACTION_PICK);
+        toImageGalley.setType("image/*");
+        if (isNetworkConnected()) {
+            startActivityForResult(toImageGalley, IMAGE_REQUEST_CODE);
+        } else {
+            Toast.makeText(this, "Turn On Internet", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void fnAudio(View view) {
         Intent toAudioGallery = new Intent(Intent.ACTION_PICK);
         toAudioGallery.setType("audio/*");
-        startActivityForResult(toAudioGallery, AUDIO_REQUEST_CODE);
+        if (isNetworkConnected()) {
+            startActivityForResult(toAudioGallery, AUDIO_REQUEST_CODE);
+        } else {
+            Toast.makeText(this, "Turn On Internet", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        mProgressDialog.setMessage("UPLOADING...");
+        //Get image path
+        progressDialog.setMessage("UPLOADING...");
+        Uri path = data.getData();
+        progressDialog.show();
 
+        //Create path in firebase
         if (requestCode == IMAGE_REQUEST_CODE) {
-            uriImage = data.getData();
-            mProgressDialog.show();
-
-            imageName = mStorage.child("Images/" + uriImage.getLastPathSegment());
-            upload(imageName, uriImage, 0);
+            StorageReference imagePath = storage.child("Images/" + path.getLastPathSegment());
+            upload(imagePath, path, 0);
         } else if (requestCode == AUDIO_REQUEST_CODE) {
-            uriAudio = data.getData();
-            mProgressDialog.show();
-
-            audioName = mStorage.child("Audio/" + uriAudio.getLastPathSegment());
-            upload(audioName, uriAudio, 1);
+            StorageReference audioPath = storage.child("Audio/" + path.getLastPathSegment());
+            upload(audioPath, path, 1);
         }
     }
 
-    public void upload(final StorageReference fileName, Uri uri, final int check) {
-        fileName.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    public void upload(final StorageReference filePath, Uri uri, final int check) {
+        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
                 Toast.makeText(AddActivity.this, "Upload Successful", Toast.LENGTH_SHORT).show();
-                mProgressDialog.dismiss();
-                fileName.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                progressDialog.dismiss();
+
+                //Fetching Firebase upload media uri
+                filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         if (check == 0) {
+                            btImage.setText("Image Uploaded");
                             uriImage = uri;
                         } else if (check == 1) {
+                            btAudio.setText("Audio Uploaded");
                             uriAudio = uri;
                         }
                     }
                 });
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(AddActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
-                mProgressDialog.dismiss();
+                Toast.makeText(AddActivity.this, "Upload Failed. Check Internet", Toast.LENGTH_SHORT).show();
+                progressDialog.dismiss();
+                Log.w("Media upload", "Failed", e);
             }
         });
     }
 
-    public void logicDate(View view) {
+    public void date(View view) {
+        int mYear = cal.get(Calendar.YEAR);
+        int mMonth = cal.get(Calendar.MONTH);
+        int mDay = cal.get(Calendar.DAY_OF_MONTH);
+        String dateFormat = "dd/MM/yy";
+        final SimpleDateFormat sdf = new SimpleDateFormat(dateFormat, Locale.getDefault());
+
         DatePickerDialog mDatePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                month = month + 1;
-                mDate = day + "/" + month + "/" + year;
+                cal.set(Calendar.YEAR, year);
+                cal.set(Calendar.MONTH, month);
+                cal.set(Calendar.DAY_OF_MONTH, day);
+                daty = cal.getTime();
+                mDate = sdf.format(daty);
                 tvDate.setText(mDate);
+                System.out.println("mDate: " + mDate);
             }
         }, mYear, mMonth, mDay);
         mDatePickerDialog.show();
     }
 
-    public void logicTime(View view) {
+    public void time(View view) {
+        int mHour = cal.get(Calendar.HOUR);
+        int mMinute = cal.get(Calendar.MINUTE);
+        final SimpleDateFormat sdf = new SimpleDateFormat("HH:MM", Locale.getDefault());
+
         TimePickerDialog mTimePickerDialog = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
-                mTime = hour + ":" + minute;
+                cal.set(Calendar.HOUR, hour);
+                cal.set(Calendar.MINUTE, minute);
+                timy = cal.getTime();
+                mTime = sdf.format(timy);
                 tvTime.setText(mTime);
+                System.out.println("mTme: " + mTime);
             }
         }, mHour, mMinute, false);
         mTimePickerDialog.show();
     }
 
+    //Adding done button in navbar
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_actionbar, menu);
         return true;
     }
 
+    //On done button click
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.iDone) {
-            mTitle = tietTitle.getText().toString();
-            mDescription = tietDescription.getText().toString();
+            //Grab inserted data
+            mTitle = tbTitle.getText().toString();
+            mDescription = tbDescription.getText().toString();
 
+            //Check switch condition
             if (!mTitle.isEmpty()) {
-                if (!swCheck) {
-                    mDate = null;
-                    mTime = null;
-                }
-                CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio));
-                if (pos != -1) {
-                    cardArray.add(pos, cd);
-                    uniqueRef = notesRef.child(String.valueOf(pos));
-                    Log.i("Note Edited: ", "TRUE");
+                //Check Internet
+                if (isNetworkConnected()) {
+                    if (!swRemind.isChecked()) {
+                        mDate = null;
+                        mTime = null;
+                    }
+
+                    CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio));
+                    if (pos != -1) {
+                        cardArray.add(pos, cd);
+                        uidRef = notesRef.child(String.valueOf(pos));
+                        Log.i("Edit Note", String.valueOf(pos));
+                    } else {
+                        Bundle get = getIntent().getExtras();
+                        int cnt = get.getInt("sendCount");
+                        cardArray.add(cd);
+                        uidRef = notesRef.child(String.valueOf(cnt));
+                        Log.i("New Note", "Created");
+                    }
+
+                    uploadData(cd);
+                    try {
+                        Log.i("Alarm", "Added");
+                    } catch (Exception e) {
+                        Log.i("Alarm", "Failed");
+                        Toast.makeText(AddActivity.this, "Not Working", Toast.LENGTH_SHORT).show();
+                    }
+                    Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
+                    finish();
                 } else {
-                    cardArray.add(cd);
-                    uniqueRef = notesRef.child(String.valueOf(count++));
+                    Toast.makeText(this, "Turn On Internet", Toast.LENGTH_SHORT).show();
                 }
-
-                uploadData(cd);
-//                MainActivity.adapter.notifyDataSetChanged();
-
-                Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
-                finish();
             } else {
                 Toast.makeText(this, "Title is Empty", Toast.LENGTH_SHORT).show();
             }
@@ -313,12 +383,12 @@ public class AddActivity extends AppCompatActivity {
     }
 
     private void uploadData(CardDetails cd) {
-        uniqueRef.child("Title").setValue(cd.getTitle());
-        uniqueRef.child("Date").setValue(cd.getDate());
-        uniqueRef.child("Time").setValue(cd.getTime());
-        uniqueRef.child("Description").setValue(cd.getDescription());
-        uniqueRef.child("Image").setValue(cd.getImage());
-        uniqueRef.child("Audio").setValue(cd.getAudio());
+        uidRef.child("Title").setValue(cd.getTitle());
+        uidRef.child("Date").setValue(cd.getDate());
+        uidRef.child("Time").setValue(cd.getTime());
+        uidRef.child("Description").setValue(cd.getDescription());
+        uidRef.child("Image").setValue(cd.getImage());
+        uidRef.child("Audio").setValue(cd.getAudio());
     }
 
 }

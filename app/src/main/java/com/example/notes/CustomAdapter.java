@@ -3,6 +3,7 @@ package com.example.notes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,20 +19,17 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
     private ArrayList<CardDetails> detailsArray;
     public static Context context;
 
+    //Constructor
     public CustomAdapter(ArrayList<CardDetails> cardArray) {
         detailsArray = cardArray;
     }
 
+    //Capture Context
     public static void getContext(Context mContext) {
         context = mContext;
     }
 
-    @Override
-    public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
-        CardDetails tempDetails = detailsArray.get(position);
-        holder.title.setText(tempDetails.getTitle());
-    }
-
+    //Inflate view for layout
     @NonNull
     @Override
     public CustomViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -39,26 +37,48 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
         return new CustomViewHolder(v);
     }
 
+    //Bind title to card
+    @Override
+    public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
+        CardDetails tempDetails = detailsArray.get(position);
+        if (tempDetails.getTitle().length() > 24) {
+            holder.title.setText(tempDetails.getTitle().substring(0, 22) + "...");
+        } else {
+            holder.title.setText(tempDetails.getTitle());
+        }
+    }
+
+    //Array size
+    @Override
+    public int getItemCount() {
+        return detailsArray.size();
+    }
+
+    //View Holder
     public class CustomViewHolder extends RecyclerView.ViewHolder {
         public TextView title;
         public ImageButton del;
 
+        //Inner Constructor
         public CustomViewHolder(@NonNull View itemView) {
             super(itemView);
+            //Assign Id's
             title = itemView.findViewById(R.id.tvTitle);
             del = itemView.findViewById(R.id.btDelete);
 
+            //On note delete
             del.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
+                    Log.i("Deleted array Position", String.valueOf(pos));
 //                    detailsArray.remove(pos);
-//                    notifyItemRemoved(pos);
                     AddActivity.notesRef.child(String.valueOf(pos)).removeValue();
-                    notifyDataSetChanged();
+//                    notifyItemRemoved(pos);
                 }
             });
 
+            //On note view
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -79,11 +99,6 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
             });
 
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return detailsArray.size();
     }
 
 }
