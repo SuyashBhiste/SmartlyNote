@@ -85,20 +85,6 @@ public class AddActivity extends AppCompatActivity {
     private int pos;
     private boolean check;
 
-    private boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
-    }
-
-    public boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
-            return !ipAddr.equals("");
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +110,7 @@ public class AddActivity extends AppCompatActivity {
         try { //Edit Note
             //Getting Card Position
             bundle = getIntent().getExtras();
-            pos = Integer.parseInt(bundle.getString("sendPos"));
+            pos = bundle.getInt("sendId");
             fnEdit();
         } catch (Exception e) { //New Note
             pos = -1;
@@ -349,10 +335,11 @@ public class AddActivity extends AppCompatActivity {
                         mTime = null;
                     }
 
-                    CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio));
+                    CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), MainActivity.id++);
                     if (pos != -1) {
                         cardArray.add(pos, cd);
                         uidRef = notesRef.child(String.valueOf(pos));
+
                         Log.i("Edit Note", String.valueOf(pos));
                     } else {
                         Bundle get = getIntent().getExtras();
@@ -389,6 +376,21 @@ public class AddActivity extends AppCompatActivity {
         uidRef.child("Description").setValue(cd.getDescription());
         uidRef.child("Image").setValue(cd.getImage());
         uidRef.child("Audio").setValue(cd.getAudio());
+        uidRef.child("Id").setValue(cd.getId());
+    }
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    public boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+            return !ipAddr.equals("");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
 }

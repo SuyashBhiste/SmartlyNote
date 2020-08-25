@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">Note Smartly</string>
     <string name="str_title_name">Title</string>
     <string name="str_desc_name">Description</string>
     <string name="str_remindMe_name">Remind Me</string>

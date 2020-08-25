@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/svInfo"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InfoAndReport">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Company Logo"
+            android:paddingTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_appicon" />
+
+        <TextView
+            android:id="@+id/tvComapnyName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-smallcaps"
+            android:text="Note Smartly"
+            android:textColor="#2C3335"
+            android:textSize="40sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ivLogo" />
+
+        <TextView
+            android:id="@+id/tvInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:paddingTop="20dp"
+            android:text="Thank you for downloading Note Smartly app. This app is developed by Suyash, who has utilized his recently learnt Android Development skills to help people manage thier daily tasks and work efficiently. Many new features coming soon..."
+            android:textSize="20dp"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvComapnyName" />
+
+        <EditText
+            android:id="@+id/etFeature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Request a feature..."
+            android:paddingStart="30dp"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvInfo" />
+
+        <EditText
+            android:id="@+id/etReport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Write request feature"
+            android:ems="10"
+            android:hint="Report a bug..."
+            android:inputType="textAutoCorrect"
+            android:padding="20dp"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etFeature" />
+
+        <EditText
+            android:id="@+id/etMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints="Write bug report"
+            android:ems="10"
+            android:hint="Write a message to Suyash..."
+            android:inputType="textAutoCorrect"
+            android:padding="20dp"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etReport" />
+
+        <Button
+            android:id="@+id/btSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#1287A5"
+            android:paddingBottom="10dp"
+            android:text="Send"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etMessage" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

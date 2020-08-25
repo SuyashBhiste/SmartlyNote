@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference usersRef;
     private DatabaseReference uidRef;
     private DatabaseReference notesRef;
+    static int id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,13 @@ public class MainActivity extends AppCompatActivity {
             Intent toLogin = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(toLogin);
             finish();
+        }
+
+        if (item.getItemId() == R.id.iReport) {
+            System.out.println("Report");
+            auth.signOut();
+            Intent toInfoAndReport = new Intent(MainActivity.this, InfoAndReport.class);
+            startActivity(toInfoAndReport);
         }
 
         return super.onOptionsItemSelected(item);

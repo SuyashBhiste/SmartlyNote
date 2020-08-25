@@ -7,6 +7,12 @@
     tools:context=".MainActivity">
 
     <item
+        android:id="@+id/iReport"
+        android:icon="@drawable/ic_info"
+        android:title="About"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/iLogOut"
         android:icon="@drawable/ic_logout"
         android:title="LogOut"
