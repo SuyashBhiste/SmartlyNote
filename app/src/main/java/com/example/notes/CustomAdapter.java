@@ -23,6 +23,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
     private ArrayList<CardDetails> detailsArray;
     public static Context context;
     private FirebaseStorage mFirebaseStorage = FirebaseStorage.getInstance();
+    private StorageReference mStorageReference = mFirebaseStorage.getReference();
 
     //Constructor
     public CustomAdapter(ArrayList<CardDetails> cardArray) {
@@ -81,9 +82,10 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
 
                     //Delete image from Firebase Storage
                     String delImage = detailsArray.get(pos).getImage();
+                    StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(delImage);
                     System.out.println("delImage" + delImage);
                     if (!delImage.equals("null")) {
-                        mFirebaseStorage.getReferenceFromUrl(delImage).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.i("Image deleted at", String.valueOf(delId));
@@ -98,8 +100,9 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
 
                     //Delete audio from Firebase Storage
                     String delAudio = detailsArray.get(pos).getAudio();
+                    StorageReference musicRef = mFirebaseStorage.getReferenceFromUrl(delAudio);
                     if (!delAudio.equals("null")) {
-                        mFirebaseStorage.getReferenceFromUrl(delAudio).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        musicRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.i("Image deleted at", String.valueOf(delId));
