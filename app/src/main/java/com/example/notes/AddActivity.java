@@ -335,13 +335,16 @@ public class AddActivity extends AppCompatActivity {
                         mTime = null;
                     }
 
-                    CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), MainActivity.id++);
                     if (pos != -1) {
-                        cardArray.add(pos, cd);
+                        //Edit
+                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), pos);
+                        cardArray.set(pos, cd);
                         uidRef = notesRef.child(String.valueOf(pos));
 
                         Log.i("Edit Note", String.valueOf(pos));
                     } else {
+                        //New
+                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), MainActivity.id++);
                         Bundle get = getIntent().getExtras();
                         int cnt = get.getInt("sendCount");
                         cardArray.add(cd);
