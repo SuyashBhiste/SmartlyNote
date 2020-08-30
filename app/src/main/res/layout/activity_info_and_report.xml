@@ -41,7 +41,7 @@
             android:layout_height="wrap_content"
             android:padding="20dp"
             android:paddingTop="20dp"
-            android:text="Thank you for downloading Note Smartly app. This app is developed by Suyash, who has utilized his recently learnt Android Development skills to help people manage thier daily tasks and work efficiently. Many new features coming soon..."
+            android:text="Thank you for downloading Smartly Note app. This app is developed by Suyash, who has utilized his recently learnt Android Development skills to help people manage thier daily tasks and work efficiently. Many new features coming soon...\n\nFor more visit sites.google.com/view/smartlynote"
             android:textSize="20dp"
             android:textStyle="italic"
             app:layout_constraintEnd_toEndOf="parent"
