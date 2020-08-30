@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.smartlynote.notes;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.smartlynote.notes;
 
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
@@ -45,7 +45,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import static com.example.notes.MainActivity.cardArray;
+import static com.smartlynote.notes.MainActivity.cardArray;
 
 public class AddActivity extends AppCompatActivity {
 

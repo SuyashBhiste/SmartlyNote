@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.smartlynote.notes;
 
 import android.content.Intent;
 import android.os.Bundle;

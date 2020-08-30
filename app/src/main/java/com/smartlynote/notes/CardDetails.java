@@ -1,4 +1,4 @@
-package com.example.notes;
+package com.smartlynote.notes;
 
 public class CardDetails {
     private String Title;
