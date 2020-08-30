@@ -110,12 +110,15 @@ public class AddActivity extends AppCompatActivity {
         try { //Edit Note
             //Getting Card Position
             bundle = getIntent().getExtras();
-            pos = bundle.getInt("sendId");
+            pos = getIntent().getIntExtra("pos",-1);
+            System.out.println("poss"+pos);
             fnEdit();
         } catch (Exception e) { //New Note
             pos = -1;
+            System.out.println("catch");
         }
-
+        btAudio.setVisibility(View.VISIBLE);
+        btImage.setVisibility(View.VISIBLE);
     }
 
     //Edit Note
@@ -191,6 +194,8 @@ public class AddActivity extends AppCompatActivity {
             check = false;
         } else {
             swRemind.setChecked(true);
+            tvDate.setText("Date");
+            tvTime.setText("Time");
             tvDate.setVisibility(View.VISIBLE);
             tvTime.setVisibility(View.VISIBLE);
             check = true;
@@ -334,25 +339,31 @@ public class AddActivity extends AppCompatActivity {
                         mDate = null;
                         mTime = null;
                     }
-
+                    int id=(bundle.getInt("sendId"));
+                    System.out.println(id+"idd");
                     if (pos != -1) {
                         //Edit
-                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), pos);
+                        System.out.println("edit");
+                        System.out.println(pos);
+                        System.out.println(cardArray.get(pos).getId());
+                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), cardArray.get(pos).getId());
                         cardArray.set(pos, cd);
-                        uidRef = notesRef.child(String.valueOf(pos));
-
+                        uidRef = notesRef.child(cardArray.get(pos).getId());
+                        uploadData(cd);
+                        Toast.makeText(this, "Restart your app", Toast.LENGTH_SHORT).show();
                         Log.i("Edit Note", String.valueOf(pos));
                     } else {
                         //New
-                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), MainActivity.id++);
+                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), String.valueOf(MainActivity.id++));
                         Bundle get = getIntent().getExtras();
                         int cnt = get.getInt("sendCount");
                         cardArray.add(cd);
                         uidRef = notesRef.child(String.valueOf(cnt));
                         Log.i("New Note", "Created");
+                        uploadData(cd);
                     }
 
-                    uploadData(cd);
+
                     try {
                         Log.i("Alarm", "Added");
                     } catch (Exception e) {
