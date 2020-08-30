@@ -7,16 +7,16 @@ public class CardDetails {
     private String Description;
     private String Image;
     private String Audio;
-    private int id;
+    private String Id;
 
-    public CardDetails(String Title, String Date, String Time, String Description, String Image, String Audio, int id) {
+    public CardDetails(String Title, String Date, String Time, String Description, String Image, String Audio, String Id) {
         this.Title = Title;
         this.Date = Date;
         this.Time = Time;
         this.Description = Description;
         this.Image = Image;
         this.Audio = Audio;
-        this.id = id;
+        this.Id = Id;
     }
 
     public CardDetails() {
@@ -67,16 +67,18 @@ public class CardDetails {
         return Audio;
     }
 
+    public String getId() {
+        return Id;
+    }
+
+    public void setId(String id) {
+        Id = id;
+    }
+
     public void setAudio(String Audio) {
         this.Audio = Audio;
     }
 
-    public int getId() {
-        return id;
-    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
 }
