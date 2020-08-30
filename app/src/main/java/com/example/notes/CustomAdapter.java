@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -78,47 +79,49 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
                     Log.i("Deleted array Position", String.valueOf(pos));
-                    final int delId = detailsArray.get(pos).getId();
+                    final String delId = detailsArray.get(pos).getId();
+                    try {
+                        //Delete image from Firebase Storage
+                        String delImage = detailsArray.get(pos).getImage();
+                        StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(delImage);
+                        System.out.println("delImage" + delImage);
+                        if (!delImage.equals("null")) {
+                            photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.i("Image deleted at", String.valueOf(delId));
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.i("Image deletion failed", String.valueOf(delId));
+                                }
+                            });
+                        }
+                    }catch (Exception e){
 
-                    //Delete image from Firebase Storage
-                    String delImage = detailsArray.get(pos).getImage();
-                    StorageReference photoRef = mFirebaseStorage.getReferenceFromUrl(delImage);
-                    System.out.println("delImage" + delImage);
-                    if (!delImage.equals("null")) {
-                        photoRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.i("Image deleted at", String.valueOf(delId));
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("Image deletion failed", String.valueOf(delId));
-                            }
-                        });
                     }
-
                     //Delete audio from Firebase Storage
-                    String delAudio = detailsArray.get(pos).getAudio();
-                    StorageReference musicRef = mFirebaseStorage.getReferenceFromUrl(delAudio);
-                    if (!delAudio.equals("null")) {
-                        musicRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.i("Image deleted at", String.valueOf(delId));
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.i("Image deletion failed", String.valueOf(delId));
-                            }
-                        });
-                    }
-
+                    try {
+                        String delAudio = detailsArray.get(pos).getAudio();
+                        StorageReference musicRef = mFirebaseStorage.getReferenceFromUrl(delAudio);
+                        if (!delAudio.equals("null")) {
+                            musicRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.i("Image deleted at", String.valueOf(delId));
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.i("Image deletion failed", String.valueOf(delId));
+                                }
+                            });
+                        }
+                    }catch (Exception e){}
                     //Delete array element from local and firebase database
                     detailsArray.remove(pos);
                     AddActivity.notesRef.child(String.valueOf(delId)).removeValue();
-//                    notifyItemRemoved(pos);
                     notifyDataSetChanged();
                 }
             });
@@ -128,6 +131,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
                 @Override
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
+                    System.out.println("position"+pos);
                     Bundle bundle = new Bundle();
                     bundle.putString("sendTitle", detailsArray.get(pos).getTitle());
                     bundle.putString("sendDescription", detailsArray.get(pos).getDescription());
@@ -135,11 +139,12 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
                     bundle.putString("sendTime", detailsArray.get(pos).getTime());
                     bundle.putString("sendImage", detailsArray.get(pos).getImage());
                     bundle.putString("sendAudio", detailsArray.get(pos).getAudio());
-                    bundle.putInt("sendId", detailsArray.get(pos).getId());
+                    bundle.putString("sendId", detailsArray.get(pos).getId());
                     bundle.putString("sendPos", String.valueOf(pos));
-
+                    System.out.println(detailsArray.get(pos).getId()+"bundle");
                     Intent intent = new Intent(context, AddActivity.class);
                     intent.putExtras(bundle);
+                    intent.putExtra("pos",pos);
                     context.startActivity(intent);
                 }
             });
