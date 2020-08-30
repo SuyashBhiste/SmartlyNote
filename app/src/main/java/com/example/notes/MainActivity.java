@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,16 +79,23 @@ public class MainActivity extends AppCompatActivity {
         if (!isNetworkConnected()) {
             Toast.makeText(this, "You are offline. Turn on internet.", Toast.LENGTH_SHORT).show();
         }
-
         notesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            int max=-1;
             @Override
             public void onDataChange(@NonNull DataSnapshot datasnapshot) {
                 for (DataSnapshot snapshot : datasnapshot.getChildren()) {
                     CardDetails user = snapshot.getValue(CardDetails.class);
                     cardArray.add(user);
+
+
+                    if(max<Integer.parseInt(snapshot.getKey())){
+                        max=Integer.parseInt(snapshot.getKey());
+                    }
                 }
 
                 Log.i("All Data Fetch Success", user.getEmail());
+                if (max!=-1){
+                MainActivity.id=max+1;}
                 adapter.notifyDataSetChanged();
             }
 
