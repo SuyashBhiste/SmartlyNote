@@ -17,11 +17,6 @@ Smartly Note app helps you take notes on the go. You can access it from any devi
 * Note Smartly will remind you all your important tasks.
 * Delete all your private notes anytime.
 
-### Screenshots
-![Login Page](https://github.com/SuyashBhiste/SmartlyNote/blob/master/Screenshots/First%20Page.jpg) | ![Main Page](https://github.com/SuyashBhiste/SmartlyNote/blob/master/Screenshots/Second%20Page.jpg) | ![Add Page](https://github.com/SuyashBhiste/SmartlyNote/blob/master/Screenshots/Third%20Page.jpg) | ![Info Page](https://github.com/SuyashBhiste/SmartlyNote/blob/master/Screenshots/Fourth%20Page.jpg)
---------------------------------------------|--------------------------------------------|--------------------------------------------|--------------------------------------------
-Easy login provided through Google account. | Beautifully organized, easy to manage your notes. | Add title and detailed description as per your convenience. | Information about creator and bug report feature.
-
 ### More Info
 
 Please read the (privacy policy)[https://www.sites.google.com/view/smartlynote/privacy-policy] carefully. Write us at smartlynote@gmail.com
