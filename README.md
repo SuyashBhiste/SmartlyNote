@@ -28,6 +28,5 @@ The project is open for contribution. Any valid and valuable submission will be 
 Please do report if an bugs encountered.
 
 ### More Info
-For further more information or updates visit [our website](https://www.sites.google.com/view/smartlynote)
-Download my app from [Amazon App Store](#)
+For further more information or updates visit [our website](https://www.sites.google.com/view/smartlynote).
  Write us at smartlynote@gmail.com
