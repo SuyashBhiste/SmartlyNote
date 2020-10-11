@@ -76,6 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
                                 //Account Created
+                                user = auth.getCurrentUser();
                                 Log.i("Account created(Email)", mEmail);
                                 Log.i(mEmail, "signUpResult:success");
 
