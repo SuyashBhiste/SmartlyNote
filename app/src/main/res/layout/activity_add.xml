@@ -96,6 +96,18 @@
             android:contentDescription="Image saved"
             android:visibility="gone" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btRemoveImage"
+            android:layout_weight="1"
+            android:layout_marginEnd="20dp"
+            android:onClick="fnRemoveImage"
+            style="?android:attr/buttonBarButtonStyle"
+            android:text="Remove Image"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone" />
+
         <ImageButton
             android:id="@+id/ibSavedAudio"
             android:layout_width="wrap_content"
@@ -109,6 +121,18 @@
             android:scaleY="3.0"
             android:onClick="audio"
             android:src="@drawable/ic_play"
+            android:visibility="gone" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btRemoveAudio"
+            android:layout_weight="1"
+            android:layout_marginEnd="20dp"
+            android:onClick="fnRemoveAudio"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_gravity="center_horizontal"
+            android:text="Remove Audio"
             android:visibility="gone" />
 
         <com.google.android.material.switchmaterial.SwitchMaterial
