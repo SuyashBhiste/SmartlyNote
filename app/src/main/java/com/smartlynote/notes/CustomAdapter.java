@@ -80,6 +80,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
                     int pos = getAdapterPosition();
                     Log.i("Deleted array Position", String.valueOf(pos));
                     final String delId = detailsArray.get(pos).getId();
+//                    final String delId = String.valueOf(pos);
                     try {
                         //Delete image from Firebase Storage
                         String delImage = detailsArray.get(pos).getImage();
@@ -132,6 +133,7 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
                 public void onClick(View view) {
                     int pos = getAdapterPosition();
                     System.out.println("position"+pos);
+
                     Bundle bundle = new Bundle();
                     bundle.putString("sendTitle", detailsArray.get(pos).getTitle());
                     bundle.putString("sendDescription", detailsArray.get(pos).getDescription());
@@ -139,9 +141,10 @@ class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.CustomViewHolder>
                     bundle.putString("sendTime", detailsArray.get(pos).getTime());
                     bundle.putString("sendImage", detailsArray.get(pos).getImage());
                     bundle.putString("sendAudio", detailsArray.get(pos).getAudio());
-                    bundle.putString("sendId", detailsArray.get(pos).getId());
+                    bundle.putString("sendId", String.valueOf(pos));
                     bundle.putString("sendPos", String.valueOf(pos));
                     System.out.println(detailsArray.get(pos).getId()+"bundle");
+
                     Intent intent = new Intent(context, AddActivity.class);
                     intent.putExtras(bundle);
                     intent.putExtra("pos",pos);
