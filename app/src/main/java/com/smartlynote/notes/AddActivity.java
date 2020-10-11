@@ -31,7 +31,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -45,17 +44,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.smartlynote.notes.MainActivity.auth;
 import static com.smartlynote.notes.MainActivity.cardArray;
 
 public class AddActivity extends AppCompatActivity {
 
     //Firebase Declarations
-    static FirebaseAuth auth = FirebaseAuth.getInstance();
     static FirebaseUser user = auth.getCurrentUser();
     static FirebaseDatabase db = FirebaseDatabase.getInstance();
     static DatabaseReference rootRef = db.getReference();
     static DatabaseReference usersRef = rootRef.child("Users");
     static DatabaseReference uidRef = usersRef.child(user.getUid());
+
     //XML Attributes
     private TextInputEditText tbTitle, tbDescription;
     private TextView tvDate, tvTime;
@@ -63,6 +63,8 @@ public class AddActivity extends AppCompatActivity {
     private Button btImage, btAudio;
     private ImageView ivImage;
     private ImageButton ibtAudio;
+    private Button btRemoveImage;
+    private Button btRemoveAudio;
     static DatabaseReference notesRef = uidRef.child("Notes");
     private Calendar cal = Calendar.getInstance();
     private Date timy, daty;
@@ -82,6 +84,8 @@ public class AddActivity extends AppCompatActivity {
     private String mDescription;
     private String mDate;
     private String mTime;
+    private String strUriImage;
+    private String strUriAudio;
     private int pos;
     private boolean check;
 
@@ -99,7 +103,9 @@ public class AddActivity extends AppCompatActivity {
         tvDate = findViewById(R.id.tvDate);
         tvTime = findViewById(R.id.tvTime);
         ivImage = findViewById(R.id.ivSavedImage);
+        btRemoveImage = findViewById(R.id.btRemoveImage);
         ibtAudio = findViewById(R.id.ibSavedAudio);
+        btRemoveAudio = findViewById(R.id.btRemoveAudio);
 
         //Initialization
         mediaPlayer = new MediaPlayer();
@@ -116,9 +122,9 @@ public class AddActivity extends AppCompatActivity {
         } catch (Exception e) { //New Note
             pos = -1;
             System.out.println("catch");
+            btAudio.setVisibility(View.VISIBLE);
+            btImage.setVisibility(View.VISIBLE);
         }
-        btAudio.setVisibility(View.VISIBLE);
-        btImage.setVisibility(View.VISIBLE);
     }
 
     //Edit Note
@@ -128,6 +134,8 @@ public class AddActivity extends AppCompatActivity {
         tbDescription.setText(bundle.getString("sendDescription"));
         tvDate.setText(bundle.getString("sendDate"));
         tvTime.setText(bundle.getString("sendTime"));
+        strUriImage = bundle.getString("sendImage");
+        strUriAudio = bundle.getString("sendAudio");
 
         //Handling Visibility
         if (!tvDate.getText().equals("") || !tvTime.getText().equals("")) {
@@ -146,6 +154,7 @@ public class AddActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(Uri.parse(bundle.getString("sendImage")))
                     .into(ivImage);
+            btRemoveImage.setVisibility(View.VISIBLE);
         }
 
         if (!bundle.getString("sendAudio").isEmpty()) {
@@ -170,9 +179,12 @@ public class AddActivity extends AppCompatActivity {
                         ibtAudio.setImageResource(R.drawable.ic_play);
                     }
                 });
+                btRemoveAudio.setVisibility(View.VISIBLE);
             } catch (Exception e) {
                 Log.w("Audio fetch", "ERROR", e);
             }
+        } else {
+            ibtAudio.setVisibility(View.GONE);
         }
     }
 
@@ -216,6 +228,7 @@ public class AddActivity extends AppCompatActivity {
     public void fnAudio(View view) {
         Intent toAudioGallery = new Intent(Intent.ACTION_PICK);
         toAudioGallery.setType("audio/*");
+        toAudioGallery.setAction(Intent.ACTION_GET_CONTENT);
         if (isNetworkConnected()) {
             startActivityForResult(toAudioGallery, AUDIO_REQUEST_CODE);
         } else {
@@ -340,25 +353,29 @@ public class AddActivity extends AppCompatActivity {
                         mTime = null;
                     }
                     int id=(bundle.getInt("sendId"));
-                    System.out.println(id+"idd");
+                    System.out.println(id + "id");
                     if (pos != -1) {
                         //Edit
                         System.out.println("edit");
                         System.out.println(pos);
+                        strUriAudio = bundle.getString("sendAudio");
+
                         System.out.println(cardArray.get(pos).getId());
-                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), cardArray.get(pos).getId());
+                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, strUriImage, strUriAudio, cardArray.get(pos).getId());
                         cardArray.set(pos, cd);
                         uidRef = notesRef.child(cardArray.get(pos).getId());
                         uploadData(cd);
+
                         Toast.makeText(this, "Restart your app", Toast.LENGTH_SHORT).show();
                         Log.i("Edit Note", String.valueOf(pos));
                     } else {
                         //New
-                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), String.valueOf(MainActivity.id++));
-                        Bundle get = getIntent().getExtras();
-                        int cnt = get.getInt("sendCount");
+//                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), String.valueOf(MainActivity.id++));
+                        CardDetails cd = new CardDetails(mTitle, mDate, mTime, mDescription, String.valueOf(uriImage), String.valueOf(uriAudio), String.valueOf(MainActivity.id));
+//                        Bundle b = getIntent().getExtras();
+//                        int cnt = b.getInt("sendCount");
                         cardArray.add(cd);
-                        uidRef = notesRef.child(String.valueOf(cnt));
+                        uidRef = notesRef.child(String.valueOf(MainActivity.id++));
                         Log.i("New Note", "Created");
                         uploadData(cd);
                     }
@@ -407,4 +424,15 @@ public class AddActivity extends AppCompatActivity {
         }
     }
 
+    public void fnRemoveImage(View view) {
+        ivImage.setVisibility(View.GONE);
+        btRemoveImage.setVisibility(View.GONE);
+        strUriImage = "";
+    }
+
+    public void fnRemoveAudio(View view) {
+        ibtAudio.setVisibility(View.GONE);
+        btRemoveAudio.setVisibility(View.GONE);
+        strUriAudio = "";
+    }
 }

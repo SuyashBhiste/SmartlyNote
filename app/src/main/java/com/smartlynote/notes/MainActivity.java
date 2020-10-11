@@ -30,12 +30,14 @@ public class MainActivity extends AppCompatActivity {
 
     //Notes Array Declarations
     static ArrayList<CardDetails> cardArray;
+
     //XML Attributes
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RecyclerView.Adapter<CustomAdapter.CustomViewHolder> adapter;
+
     //Firebase Declarations
-    private FirebaseAuth auth;
+    static FirebaseAuth auth = FirebaseAuth.getInstance();
     private FirebaseUser user;
     private FirebaseDatabase db;
     private DatabaseReference rootRef;
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         //Initialization
         cardArray = new ArrayList<>();
         adapter = new CustomAdapter(cardArray);
-        auth = FirebaseAuth.getInstance();
+//        auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         db = FirebaseDatabase.getInstance();
         rootRef = db.getReference();
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
         if (!isNetworkConnected()) {
             Toast.makeText(this, "You are offline. Turn on internet.", Toast.LENGTH_SHORT).show();
         }
+
         notesRef.addListenerForSingleValueEvent(new ValueEventListener() {
             int max=-1;
             @Override
@@ -104,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                 Log.w("All Data Fetch fail", user.getEmail(), error.toException());
             }
         });
-
 
     }
 

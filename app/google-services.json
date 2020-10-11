@@ -8,43 +8,6 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:992286387436:android:d9c98f645d5604937389c9",
-        "android_client_info": {
-          "package_name": "com.example.notes"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "992286387436-lcacib7u0qse5m7n5ab8fovse0amu5ug.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.notes",
-            "certificate_hash": "a83e208c42158f22062ec76a58ff37957ddcb77c"
-          }
-        },
-        {
-          "client_id": "992286387436-82tllt94bbqe0u940aqas7ifko1ahgje.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD-qeCaFT3Y3ivHj5doFjzZksHZxX0JP24"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "992286387436-2l9g987cof5rkimnr6gt3vai8sj6j5v0.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
         "mobilesdk_app_id": "1:992286387436:android:a044003cdcd141137389c9",
         "android_client_info": {
           "package_name": "com.smartlynote.notes"
